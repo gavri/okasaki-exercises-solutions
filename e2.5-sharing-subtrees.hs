@@ -1,4 +1,6 @@
-data Tree a = Empty | Bin a (Tree a) (Tree a) deriving Show
+import Test.HUnit
+
+data Tree a = Empty | Bin a (Tree a) (Tree a) deriving (Show, Eq)
 completeWithNoSharing x 0 = Empty
 completeWithNoSharing x d = Bin x (completeWithNoSharing x (d - 1)) (completeWithNoSharing x (d - 1))
 
@@ -27,6 +29,7 @@ tree x n = Bin x ((trees x) !! n1) ((trees x) !! n2)
 
 trees x = map (tree x) [0..]
 
-main = do
-        print $ tree 5 3
-        print $ (trees 5) !! 5
+main = runTestTT $ test $ [
+  "tree" ~: (Bin 5 (Bin 5 Empty Empty) (Bin 5 Empty Empty)) ~=? tree 5 3,
+  "trees" ~: (Bin 5 (Bin 5 (Bin 5 Empty Empty) Empty) (Bin 5 (Bin 5 Empty Empty) Empty)) ~=? (trees 5) !! 5
+  ]
